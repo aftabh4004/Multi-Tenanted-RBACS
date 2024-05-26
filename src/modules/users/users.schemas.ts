@@ -16,3 +16,16 @@ export const createUserJsonSchema = {
   body: zodToJsonSchema(createUserBodySchema, "createUserBodySchema"),
 };
 
+
+
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string(),
+  applicationId: z.string(),
+});
+
+export type LoginBody = z.infer<typeof loginSchema>;
+
+export const loginJsonSchema = {
+  body: zodToJsonSchema(loginSchema, "loginSchema"),
+};

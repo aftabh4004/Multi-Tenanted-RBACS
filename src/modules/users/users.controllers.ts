@@ -7,7 +7,11 @@ import {
   getUsersByApplication,
 } from "./users.services";
 import { getRoleByName } from "../roles/roles.services";
+import { LoginBody } from "./users.schemas";
+import { getUserByEmail } from "./users.services";
 
+import jwt from "jsonwebtoken";
+import { env } from "../../config/env";
 
 export async function createUserHandler(
   request: FastifyRequest<{
@@ -60,4 +64,40 @@ export async function createUserHandler(
     return user;
   } catch (e) {}
 }
+
+
+
+export async function loginHandler(
+  request: FastifyRequest<{
+    Body: LoginBody;
+  }>,
+  reply: FastifyReply
+) {
+  const { applicationId, email, password } = request.body;
+
+  const user = await getUserByEmail({
+    applicationId,
+    email,
+  });
+
+  if (!user) {
+    return reply.code(400).send({
+      message: "Invalid email or password",
+    });
+  }
+
+
+  const token = jwt.sign(
+    {
+      id: user.id,
+      email,
+      applicationId,
+      scopes: user.permissions,
+    },
+    env.TOKEN
+  ); 
+
+  return { token };
+}
+
 
