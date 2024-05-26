@@ -61,10 +61,6 @@ export async function getUserByEmail({
     })
     .from(users)
     .where(and(eq(users.email, email), eq(users.applicationId, applicationId)))
-    // LEFT JOIN
-    // FROM usersToRoles
-    // ON usersToRoles.userId = users.id
-    // AND usersToRoles.applicationId = users.application
     .leftJoin(
       usersToRoles,
       and(
@@ -72,9 +68,6 @@ export async function getUserByEmail({
         eq(usersToRoles.applicationId, users.applicationId)
       )
     )
-    // LEFT JOIN
-    // FROM roles
-    // ON roles.id = usersToRoles.roleId
     .leftJoin(roles, eq(roles.id, usersToRoles.roleId));
 
   if (!result.length) {
